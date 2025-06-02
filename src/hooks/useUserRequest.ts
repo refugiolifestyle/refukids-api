@@ -3,6 +3,7 @@ import { TupleResponse } from "@/types/core";
 import { Usuario } from "@/types/schema";
 import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
+import { useTuple } from "./useTuple";
 
 export const useUserRequest = async (req: Request): Promise<TupleResponse<Usuario>> => {
     const h = req.headers.get("authorization");
@@ -14,11 +15,11 @@ export const useUserRequest = async (req: Request): Promise<TupleResponse<Usuari
     }
 
     const token = h.split(' ')[1];
-    const firebaseInfos = await auth.verifyIdToken(token, true)
-    if (!firebaseInfos) {
+    const [firebaseInfos, firebaseInfosError] = await useTuple(auth.verifyIdToken(token, true))
+    if (firebaseInfosError != null) {
         return [
             null,
-            new Error("Token Inválido")
+            new Error("Token Inválido, faça o login novamente")
         ]
     }
 
@@ -32,7 +33,7 @@ export const useUserRequest = async (req: Request): Promise<TupleResponse<Usuari
     if (!usuarioSnap.exists()) {
         return [
             null,
-            new Error("Usuário não encontrado")
+            new Error("Usuário não encontrado no banco de dados")
         ]
     }
 

@@ -10,11 +10,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function POST(req: Request) {
-    const [usuario, usuarioErro] = await useUserRequest(req)
-    if (usuarioErro != null) {
-        return httpErrors.unauthorized(usuarioErro.message)
-    }
-
     const { data, error } = z
         .object({
             cpf: z.string().trim().transform(onlyNumbers).refine(cpfValidator.isValid, { message: "CPF inválido" }),

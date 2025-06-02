@@ -64,6 +64,7 @@ export interface Crianca {
     dataNascimento: string;
     sexo: string;
     observacao?: string;
+    familia: string;
     cadastradoEm: string;
     checkins?: string[]; // Referência por ID
 }
@@ -75,6 +76,7 @@ export interface Responsavel {
     sexo: string;
     telefone: string;
     parentesco: string;
+    familia: string;
     endereco: string;
     numero: string;
     complemento: string;
@@ -83,6 +85,8 @@ export interface Responsavel {
     cep: string;
     cadastradoEm: string;
 }
+
+export interface Tio extends Responsavel {} 
 
 export interface Familia {
     id: string;
