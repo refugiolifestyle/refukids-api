@@ -19,14 +19,10 @@ SSH_COMMAND_MIGRATOR="docker pull $DOCKER_USER/$MIGRATOR_NAME:latest && docker c
 # =========================
 # Flags
 # =========================
-DEPLOY_PROD=false
 MIGRATOR=false
 
 for arg in "$@"; do
   case $arg in
-    --prod)
-      DEPLOY_PROD=true
-      ;;
     --migrator)
       MIGRATOR=true
       ;;
