@@ -13,8 +13,8 @@ MIGRATOR_NAME="$APP_NAME-migrator"
 SSH_USER="luis"
 SSH_HOST="refugio.vps"
 SSH_PORT="2222"
-SSH_COMMAND="docker-compose up -d --build --force-recreate refukids-api"
-SSH_COMMAND_MIGRATOR="$SSH_COMMAND-migrator"
+SSH_COMMAND="docker pull $DOCKER_USER/$APP_NAME:latest && docker compose up -d $APP_NAME"
+SSH_COMMAND_MIGRATOR="docker pull $DOCKER_USER/$MIGRATOR_NAME:latest && docker compose up -d $MIGRATOR_NAME"
 
 # =========================
 # Flags
