@@ -1,0 +1,254 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Sexo {
+  Masculino
+  Feminino
+}
+
+enum Parentesco {
+  Pai
+  Mae
+  Tio
+  Tia
+  Irmao
+  Irma
+  AvoM
+  AvoF
+  Lider
+  Outro
+}
+
+enum Turmas {
+  Refubabies
+  Refukids1
+  Refukids2
+  Refuteens
+}
+
+enum CheckinEventos {
+  Checkin
+  Acolhimento
+  Checkout
+  Anotacao
+}
+
+model Turma {
+  id          Turmas @id
+  descricao   String
+  idadeMinima Int
+  idadeMaxima Int
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  checkins Checkin[]
+}
+
+model Familia {
+  id   String @id @default(uuid())
+  nome String
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  criancas     Crianca[]
+  responsaveis Responsavel[]
+}
+
+model Crianca {
+  id                        String  @id @default(uuid())
+  foto                      String?
+  nome                      String
+  dataNascimento            String
+  sexo                      Sexo
+  observacao                String?
+  celula                    String?
+  alergia                   String?
+  condicaoMedicaMedicamento String?
+  necessidadeEspecial       String?
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  familiaId String
+  familia   Familia @relation(fields: [familiaId], references: [id])
+
+  checkins Checkin[]
+}
+
+model Responsavel {
+  id               String     @id @default(uuid())
+  foto             String?
+  nome             String
+  cpf              String     @unique
+  sexo             Sexo
+  dataNascimento   String
+  telefone         String
+  endereco         String
+  parentesco       Parentesco
+  celula           String?
+  responsavelLegal Boolean
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  familiaId String
+  familia   Familia @relation(fields: [familiaId], references: [id])
+
+  notificacoesToken     String?
+  notificacoesRecebidas UsuarioNotificacao[]
+
+  checkins CheckinEvento[] @relation("CheckinPor")
+  checkout CheckinEvento[] @relation("CheckoutPara")
+}
+
+model Impressora {
+  id        String @id @default(uuid())
+  descricao String
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  ip         String?
+  operadorId String?
+  operador   Servo?  @relation(fields: [operadorId], references: [id])
+
+  impressoes Impressao[]
+}
+
+model Impressao {
+  id String @id @default(uuid())
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  impressoraId String
+  impressora   Impressora @relation(fields: [impressoraId], references: [id])
+
+  checkinId String
+  checkin   Checkin @relation(fields: [checkinId], references: [id])
+}
+
+model Checkin {
+  id    String @id @default(uuid())
+  culto String
+
+  criancaId String
+  crianca   Crianca @relation(fields: [criancaId], references: [id])
+
+  turmaId Turmas
+  turma   Turma  @relation(fields: [turmaId], references: [id])
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  eventos CheckinEvento[]
+
+  impressoes Impressao[]
+}
+
+model CheckinEvento {
+  id   String         @id @default(uuid())
+  tipo CheckinEventos
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  checkinId String
+  checkin   Checkin @relation(fields: [checkinId], references: [id])
+
+  checkinPorId String?
+  checkinPor   Responsavel? @relation("CheckinPor", fields: [checkinPorId], references: [id])
+
+  acolhidoPorId String?
+  acolhidoPor   Servo?  @relation("AcolhidoPor", fields: [acolhidoPorId], references: [id])
+
+  checkoutPorId  String?
+  checkoutParaId String?
+  checkoutPor    Servo?       @relation("CheckoutPor", fields: [checkoutPorId], references: [id])
+  checkoutPara   Responsavel? @relation("CheckoutPara", fields: [checkoutParaId], references: [id])
+
+  anotacao     String?
+  anotadoPorId String?
+  anotadoPor   Servo?  @relation("AnotadoPor", fields: [anotadoPorId], references: [id])
+
+  responsaveisNotificados Boolean?
+}
+
+model Servo {
+  id           String    @id @default(uuid())
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  foto           String?
+  nome           String
+  cpf            String  @unique
+  sexo           Sexo
+  dataNascimento String
+  telefone       String
+  endereco       String
+  celula         String?
+
+  notificacoesToken     String?
+  notificacoesFeitas    Notificacao[]
+  notificacoesRecebidas UsuarioNotificacao[]
+
+  acolhimentos CheckinEvento[] @relation("AcolhidoPor")
+  checkouts    CheckinEvento[] @relation("CheckoutPor")
+  anotacoes    CheckinEvento[] @relation("AnotadoPor")
+
+  impressoras Impressora[]
+}
+
+model Notificacao {
+  id        String  @id @default(uuid())
+  titulo    String?
+  descricao String
+
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  notificadoPorId String
+  notificadoPor   Servo  @relation(fields: [notificadoPorId], references: [id])
+
+  usuariosNotificados UsuarioNotificacao[]
+}
+
+model UsuarioNotificacao {
+  id           String    @id @default(uuid())
+  lida         Boolean   @default(false)
+  cadastradoEm DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  deletadoEm   DateTime?
+
+  notificadoParaServoId String?
+  notificadoParaServo   Servo?  @relation(fields: [notificadoParaServoId], references: [id])
+
+  notificadoParaResponsavelId String?
+  notificadoParaResponsavel   Responsavel? @relation(fields: [notificadoParaResponsavelId], references: [id])
+
+  notificacaoId String
+  notificacao   Notificacao @relation(fields: [notificacaoId], references: [id])
+}
