@@ -13,7 +13,7 @@ MIGRATOR_NAME="$APP_NAME-migrator"
 SSH_USER="luis"
 SSH_HOST="refugio.vps"
 SSH_PORT="2222"
-SSH_COMMAND="docker compose up -d refukids-api"
+SSH_COMMAND="docker-compose up -d --build --force-recreate refukids-api"
 SSH_COMMAND_MIGRATOR="$SSH_COMMAND-migrator"
 
 # =========================
@@ -60,6 +60,10 @@ docker build \
   -t $DOCKER_USER/$APP_NAME:$NEW_VERSION \
   .
 
+if [ "$DEPLOY_PROD" = true ]; then
+  docker tag $DOCKER_USER/$APP_NAME:$NEW_VERSION $DOCKER_USER/$APP_NAME:latest
+fi
+
 # =========================
 # Build MIGRATOR image
 # =========================
@@ -69,6 +73,10 @@ if [ "$MIGRATOR" = true ]; then
     --target migrator \
     -t $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION \
     .
+  
+  if [ "$DEPLOY_PROD" = true ]; then
+    docker tag $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION $DOCKER_USER/$MIGRATOR_NAME:latest
+  fi
 fi
 
 # =========================
@@ -77,8 +85,16 @@ fi
 echo "📤 Pushing versioned images..."
 docker push $DOCKER_USER/$APP_NAME:$NEW_VERSION
 
+if [ "$DEPLOY_PROD" = true ]; then
+  docker push $DOCKER_USER/$APP_NAME:latest
+fi
+
 if [ "$MIGRATOR" = true ]; then
   docker push $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION
+
+  if [ "$DEPLOY_PROD" = true ]; then
+    docker push $DOCKER_USER/$MIGRATOR_NAME:latest
+  fi
 fi
 
 # =========================
