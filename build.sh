@@ -4,25 +4,31 @@ set -e
 # =========================
 # Config
 # =========================
-DOCKER_USER="refugiolifestyle"
-APP_NAME="refukids-api"
-MIGRATOR_NAME="refukids-api-migrator"
 VERSION_FILE="VERSION"
+DOCKER_USER="refugiolifestyle"
+
+APP_NAME="refukids-api"
+MIGRATOR_NAME="$APP_NAME-migrator"
 
 SSH_USER="luis"
 SSH_HOST="refugio.vps"
 SSH_PORT="2222"
-SSH_COMMAND="docker compose up -d refukids-api refukids-api-migrator"
+SSH_COMMAND="docker compose up -d refukids-api"
+SSH_COMMAND_MIGRATOR="$SSH_COMMAND-migrator"
 
 # =========================
 # Flags
 # =========================
 DEPLOY_PROD=false
+MIGRATOR=false
 
 for arg in "$@"; do
   case $arg in
     --prod)
       DEPLOY_PROD=true
+      ;;
+    --migrator)
+      MIGRATOR=true
       ;;
   esac
 done
@@ -57,18 +63,23 @@ docker build \
 # =========================
 # Build MIGRATOR image
 # =========================
-echo "🐳 Building MIGRATOR image ($NEW_VERSION)..."
-docker build \
-  --target migrator \
-  -t $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION \
-  .
+if [ "$MIGRATOR" = true ]; then
+  echo "🐳 Building MIGRATOR image ($NEW_VERSION)..."
+  docker build \
+    --target migrator \
+    -t $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION \
+    .
+fi
 
 # =========================
 # Push images
 # =========================
 echo "📤 Pushing versioned images..."
 docker push $DOCKER_USER/$APP_NAME:$NEW_VERSION
-docker push $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION
+
+if [ "$MIGRATOR" = true ]; then
+  docker push $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION
+fi
 
 # =========================
 # Git commit & push
@@ -83,7 +94,11 @@ git push
 # =========================
 if [ "$DEPLOY_PROD" = true ]; then
   echo "🚀 Deploying to production..."
-  ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND"
+  ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND"  
+fi
+
+if [ "$MIGRATOR" = true ]; then
+  ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND_MIGRATOR" 
 fi
 
 echo "✅ Done! Version v$NEW_VERSION built and pushed."
