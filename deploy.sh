@@ -60,9 +60,7 @@ docker build \
   -t $DOCKER_USER/$APP_NAME:$NEW_VERSION \
   .
 
-if [ "$DEPLOY_PROD" = true ]; then
-  docker tag $DOCKER_USER/$APP_NAME:$NEW_VERSION $DOCKER_USER/$APP_NAME:latest
-fi
+docker tag $DOCKER_USER/$APP_NAME:$NEW_VERSION $DOCKER_USER/$APP_NAME:latest
 
 # =========================
 # Build MIGRATOR image
@@ -74,9 +72,7 @@ if [ "$MIGRATOR" = true ]; then
     -t $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION \
     .
   
-  if [ "$DEPLOY_PROD" = true ]; then
-    docker tag $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION $DOCKER_USER/$MIGRATOR_NAME:latest
-  fi
+  docker tag $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION $DOCKER_USER/$MIGRATOR_NAME:latest
 fi
 
 # =========================
@@ -84,37 +80,30 @@ fi
 # =========================
 echo "📤 Pushing versioned images..."
 docker push $DOCKER_USER/$APP_NAME:$NEW_VERSION
-
-if [ "$DEPLOY_PROD" = true ]; then
-  docker push $DOCKER_USER/$APP_NAME:latest
-fi
+docker push $DOCKER_USER/$APP_NAME:latest
 
 if [ "$MIGRATOR" = true ]; then
   docker push $DOCKER_USER/$MIGRATOR_NAME:$NEW_VERSION
-
-  if [ "$DEPLOY_PROD" = true ]; then
-    docker push $DOCKER_USER/$MIGRATOR_NAME:latest
-  fi
+  docker push $DOCKER_USER/$MIGRATOR_NAME:latest
 fi
 
 # =========================
 # Git commit & push
 # =========================
 echo "📦 Git commit & push..."
-git add $VERSION_FILE build.sh
+git add $VERSION_FILE deploy.sh
 git commit -m "chore: bump version to v$NEW_VERSION"
 git push
 
 # =========================
 # Deploy to production
 # =========================
-if [ "$DEPLOY_PROD" = true ]; then
-  echo "🚀 Deploying to production..."
-  ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND"  
-fi
+echo "🚀 Deploying to production..."
 
 if [ "$MIGRATOR" = true ]; then
   ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND_MIGRATOR" 
 fi
+
+ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND"  
 
 echo "✅ Done! Version v$NEW_VERSION built and pushed."
