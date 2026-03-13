@@ -60,6 +60,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
+RUN mkdir -p /app/uploads
+
 USER nonroot
 EXPOSE 3000
 CMD ["server.js"]

@@ -14,15 +14,13 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        const fileName = `${Date.now()}-${file.name}`;
-        const uploadDir = path.join(process.cwd(), "public", "anexos");
+        const fileName = `refukids-${Date.now()}-${file.name}`;
+        const uploadDir = path.join(process.cwd(), "uploads");
 
         await writeFile(path.join(uploadDir, fileName), buffer);
 
-        const fileUrl = `/anexos/${fileName}`;
-
         return NextResponse.json({
-            url: fileUrl,
+            url: `/uploads/${fileName}`,
         });
     } catch (error) {
         console.error("Erro no upload:", error);
