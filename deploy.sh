@@ -7,7 +7,7 @@ set -e
 VERSION_FILE="VERSION"
 DOCKER_USER="refugiolifestyle"
 
-APP_NAME="refukids-api"
+APP_NAME="refukids"
 MIGRATOR_NAME="$APP_NAME-migrator"
 
 SSH_USER="luis"
