@@ -42,7 +42,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             foto: fotoZodValidacao,
             dataNascimento: dataNascimentoZodValidacao,
             sexo: sexoZodValidacao,
-            observacao: observacaoZodValidacao
+            observacao: observacaoZodValidacao,
+            alergia: observacaoZodValidacao,
+            condicaoMedicaMedicamento: observacaoZodValidacao,
+            necessidadeEspecial: observacaoZodValidacao
         })
         .safeParse(await req.json())
 

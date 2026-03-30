@@ -20,11 +20,15 @@ SSH_COMMAND_MIGRATOR="docker pull $DOCKER_USER/$MIGRATOR_NAME:latest && docker c
 # Flags
 # =========================
 MIGRATOR=false
+DEPLOY=false
 
 for arg in "$@"; do
   case $arg in
     --migrator)
       MIGRATOR=true
+      ;;
+    --deploy)
+      DEPLOY=true
       ;;
   esac
 done
@@ -94,12 +98,15 @@ git push
 # =========================
 # Deploy to production
 # =========================
-echo "🚀 Deploying to production..."
 
 if [ "$MIGRATOR" = true ]; then
+  echo "🚀 Deploying migrator to production..."
   ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND_MIGRATOR" 
 fi
 
-ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND"  
+if [ "$DEPLOY" = true ]; then
+  echo "🚀 Deploying to production..."
+  ssh $SSH_USER@$SSH_HOST -p $SSH_PORT "$SSH_COMMAND"  
+fi
 
 echo "✅ Done! Version v$NEW_VERSION built and pushed."
