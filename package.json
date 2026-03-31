@@ -1,6 +1,7 @@
 {
   "name": "refukids-api",
   "version": "0.1.0",
+  "appversion": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

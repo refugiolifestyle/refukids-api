@@ -1,5 +1,6 @@
 import { useUserRequest } from "@/hooks/useUserRequest"
 import { prisma } from "@/lib/prisma"
+import { getPrismaErrorMessage } from "@/utils/helpers"
 import { celulaZodValidacao, cpfZodValidacao, dataNascimentoZodValidacao, enderecoZodValidacao, fotoZodValidacao, nomeZodValidacao, parentescoZodValidacao, sexoZodValidacao, telefoneZodValidacao } from "@/utils/validacoes"
 import { NextRequest } from "next/server"
 import z from "zod"
@@ -38,25 +39,34 @@ export async function POST(req: NextRequest) {
         return Response.json({ error: 'Família não encontrada para o Usuário' }, { status: 404 })
     }
 
-    let responsavel = await prisma.responsavel.create({
-        data: {
-            cpf: payload.cpf,
-            nome: payload.nome,
-            foto: payload.foto,
-            sexo: payload.sexo,
-            telefone: payload.telefone,
-            parentesco: payload.parentesco,
-            dataNascimento: payload.dataNascimento,
-            endereco: payload.endereco,
-            celula: payload.celula,
-            responsavelLegal: payload.responsavelLegal,
-            familia: {
-                connect: {
-                    id: responsavelUsuario?.familiaId
+    try {
+        let responsavel = await prisma.responsavel.create({
+            data: {
+                cpf: payload.cpf,
+                nome: payload.nome,
+                foto: payload.foto,
+                sexo: payload.sexo,
+                telefone: payload.telefone,
+                parentesco: payload.parentesco,
+                dataNascimento: payload.dataNascimento,
+                endereco: payload.endereco,
+                celula: payload.celula,
+                responsavelLegal: payload.responsavelLegal,
+                familia: {
+                    connect: {
+                        id: responsavelUsuario?.familiaId
+                    }
                 }
             }
-        }
-    })
+        })
 
-    return Response.json({ data: responsavel })
+        return Response.json({ data: responsavel })
+    } catch (error: any) {
+        if ("clientVersion" in error) {
+            const message = getPrismaErrorMessage(error.code)
+            return Response.json({ error: message }, { status: 400 })
+        }
+
+        return Response.json({ error: 'Falha ao cadastrar o responsável' }, { status: 400 })
+    }
 } 

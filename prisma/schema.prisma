@@ -95,7 +95,7 @@ model Responsavel {
   id               String     @id @default(uuid())
   foto             String?
   nome             String
-  cpf              String     @unique
+  cpf              String
   sexo             Sexo
   dataNascimento   String
   telefone         String
@@ -116,10 +116,13 @@ model Responsavel {
 
   checkins CheckinEvento[] @relation("CheckinPor")
   checkout CheckinEvento[] @relation("CheckoutPara")
+
+  @@unique([cpf, familiaId])
 }
 
 model Impressora {
-  id        String @id @default(uuid())
+  id        String  @id @default(uuid())
+  foto      String?
   descricao String
 
   cadastradoEm DateTime  @default(now())

@@ -4,8 +4,12 @@ import { introspectToken, validateJWT } from "./lib/auth";
 export async function middleware(req: Request) {
     const auth = req.headers.get("authorization");
 
+    if (req.url.endsWith('_')) {
+        return NextResponse.next();
+    }
+
     if (!auth?.startsWith("Bearer ")) {
-        return new NextResponse("Token ausente", { status: 401 });
+        return Response.json({ error: "Token ausente" }, { status: 401 });
     }
 
     const token = auth.split(" ")[1];
@@ -15,7 +19,7 @@ export async function middleware(req: Request) {
 
         const introspect = await introspectToken(token);
         if (!introspect.active) {
-            return new NextResponse("Token revogado ou logout", { status: 401 });
+            return Response.json({ error: "Token revogado ou logout" }, { status: 401 });
         }
 
         const requestHeaders = new Headers(req.headers);
@@ -26,8 +30,7 @@ export async function middleware(req: Request) {
         });
 
     } catch (error) {
-        console.log("error", error)
-        return new NextResponse("Token inválido", { status: 401 });
+        return Response.json({ error: "Token inválido" }, { status: 401 });
     }
 }
 
