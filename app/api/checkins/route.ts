@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        let responsavel = await prisma.responsavel.count({
+        let responsavel = await prisma.responsavel.findFirst({
             where: {
                 cpf: usuario.cpf
             }
@@ -96,11 +96,7 @@ export async function POST(req: NextRequest) {
                 eventos: {
                     create: {
                         tipo: 'Checkin',
-                        checkinPor: {
-                            connect: {
-                                cpf: usuario.cpf
-                            }
-                        },
+                        checkinPorId: responsavel.id,
                         responsaveisNotificados: true
                     }
                 },

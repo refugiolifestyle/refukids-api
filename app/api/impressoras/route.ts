@@ -1,6 +1,6 @@
 import { useUserRequest } from "@/hooks/useUserRequest"
 import { prisma } from "@/lib/prisma"
-import { nomeZodValidacao } from "@/utils/validacoes"
+import { fotoZodValidacao, nomeZodValidacao } from "@/utils/validacoes"
 import { NextRequest } from "next/server"
 import z from "zod"
 
@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     const { data: payload, error: payloadError } = z
         .object({
+            foto: fotoZodValidacao,
             descricao: nomeZodValidacao,
         })
         .safeParse(await req.json())
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
 
     let impressora = await prisma.impressora.create({
         data: {
+            foto: payload.foto,
             descricao: payload.descricao
         }
     })
