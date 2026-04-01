@@ -1,5 +1,6 @@
 import { useUserRequest } from "@/hooks/useUserRequest"
 import { prisma } from "@/lib/prisma"
+import { getPrismaErrorMessage } from "@/utils/helpers"
 import { fotoZodValidacao, nomeZodValidacao } from "@/utils/validacoes"
 import { NextRequest } from "next/server"
 import z from "zod"
@@ -23,12 +24,22 @@ export async function POST(req: NextRequest) {
         return Response.json({ error: payloadError?.message }, { status: 400 })
     }
 
-    let impressora = await prisma.impressora.create({
-        data: {
-            foto: payload.foto,
-            descricao: payload.descricao
-        }
-    })
+    try {
+        let impressora = await prisma.impressora.create({
+            data: {
+                foto: payload.foto,
+                descricao: payload.descricao
+            }
+        })
 
-    return Response.json({ data: impressora })
+        return Response.json({ data: impressora })
+    }
+    catch (error: any) {
+        if ("clientVersion" in error) {
+            const message = getPrismaErrorMessage(error.code)
+            return Response.json({ error: message }, { status: 400 })
+        }
+
+        return Response.json({ error: 'Falha ao cadastrar a impressora' }, { status: 500 })
+    }
 } 
