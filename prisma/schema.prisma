@@ -167,6 +167,8 @@ model Checkin {
   eventos CheckinEvento[]
 
   impressoes Impressao[]
+
+  @@unique([culto, criancaId])
 }
 
 model CheckinEvento {
