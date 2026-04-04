@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 import z from "zod";
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const _ = useUserRequest(req)
+    const usuario = useUserRequest(req)
 
     const { id } = await params
     if (!id) {

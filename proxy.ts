@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { introspectToken, validateJWT } from "./lib/auth";
 
-export async function middleware(req: Request) {
-    const auth = req.headers.get("authorization");
-
+export async function proxy(req: Request) {
     if (req.url.endsWith('_')) {
         return NextResponse.next();
     }
 
+    const auth = req.headers.get("authorization");
     if (!auth?.startsWith("Bearer ")) {
         return Response.json({ error: "Token ausente" }, { status: 401 });
     }

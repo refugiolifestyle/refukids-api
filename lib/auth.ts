@@ -4,7 +4,7 @@ export async function validateJWT(token: string): Promise<JWTVerifyResult> {
     return jwtVerify(
         token,
         createRemoteJWKSet(new URL(`${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/certs`)), {
-        audience: ["refukids", "account"],
+        audience: ["account", "refukids", "refukids-servos"],
     });
 }
 

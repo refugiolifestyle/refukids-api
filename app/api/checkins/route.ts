@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
                 }
             },
             data: {
-                culto: moment().format('YYYY-MM-DD'),
+                culto: moment().utc().format('YYYY-MM-DD'),
                 criancaId: crianca.id,
                 turmaId: turma.id,
                 eventos: {
@@ -121,7 +121,10 @@ export async function POST(req: NextRequest) {
     }
     catch (error: any) {
         if ("clientVersion" in error) {
-            const message = getPrismaErrorMessage(error.code)
+            let message = error.code === 'P2002'
+                ? "Checkin Já realizado para essa criança"
+                : getPrismaErrorMessage(error.code)
+
             return Response.json({ error: message }, { status: 400 })
         }
 
