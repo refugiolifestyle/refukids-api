@@ -11,5 +11,12 @@ declare namespace NodeJS {
         readonly KEYCLOAK_DB_URL: string;
         readonly KEYCLOAK_DB_USERNAME: string;
         readonly KEYCLOAK_DB_PASSWORD: string;
+
+        readonly NEXT_PUBLIC_API_URL: string;
+        readonly NEXT_PUBLIC_BASE_URL: string;
+        readonly NEXT_PUBLIC_BASE_SITE_URL: string;
+        readonly NEXT_PUBLIC_BASE_REFUFILES_URL: string;
+        readonly NEXT_PUBLIC_FIREBASE_PROJECT_ID: string;
+        readonly NEXT_PUBLIC_FIREBASE_DATABASE_URL: string;
     }
 }

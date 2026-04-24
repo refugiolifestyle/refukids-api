@@ -14,8 +14,6 @@ function createExtendedClient() {
 
     const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
     const baseClient = new PrismaClient({
-        log: ["query"],
-        errorFormat: "pretty",
         adapter
     });
 

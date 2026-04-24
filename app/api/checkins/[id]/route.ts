@@ -75,5 +75,5 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return Response.json({ error: 'Checkin não encontrado' }, { status: 404 })
     }
 
-    return Response.json(checkin)
+    return Response.json({ data: checkin })
 }

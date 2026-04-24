@@ -62,7 +62,8 @@ export async function GET(req: NextRequest) {
         where: {
             responsaveis: {
                 some: {
-                    cpf: usuario.cpf
+                    cpf: usuario.cpf,
+                    responsavelLegal: true
                 }
             }
         }
