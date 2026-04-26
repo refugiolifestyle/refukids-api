@@ -1,7 +1,5 @@
-import Image from "next/image";
 
 import EventoItem from "@/components/evento-item";
-import { EventoType } from "@/types/evento";
 import { Loader2 } from "lucide-react";
 import { Metadata } from "next";
 
@@ -15,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function Eventos() {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/eventos?result=media`)
-  const { eventos } = await response.json() as { eventos: EventoType[] }
+  const { eventos } = await response.json() as { eventos: any[] }
 
   return <>
     <h1 className="text-white text-6xl font-thin">Eventos</h1>

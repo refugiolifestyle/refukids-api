@@ -1,8 +1,5 @@
 "use client"
 
-import { CelulaType } from "@/types/celulas"
-import { EventoType } from "@/types/evento"
-import { InscritoType } from "@/types/inscrito"
 import { toJpeg } from 'html-to-image'
 import { redirect } from "next/navigation"
 import { Dispatch, SetStateAction, useState } from "react"
@@ -18,17 +15,17 @@ import Termos from "./steps/termos"
 import Validacao from "./steps/validacao"
 
 type CadastrarInscritoProps = {
-  evento: EventoType,
-  celulas: CelulaType[]
+  evento: any,
+  celulas: any[]
 }
 
 export type StepProps = {
   step: number
-  evento: EventoType
-  inscrito?: InscritoType
+  evento: any
+  inscrito?: any
   setStep: Dispatch<SetStateAction<number>>
-  setInscrito: Dispatch<SetStateAction<InscritoType | undefined>>
-  celulas?: CelulaType[]
+  setInscrito: Dispatch<SetStateAction<any | undefined>>
+  celulas?: any[]
   reset: () => void
   share: () => Promise<void>
 }
@@ -46,7 +43,7 @@ export const Steps = {
 }
 
 export default function CadastrarInscrito({ evento, celulas }: CadastrarInscritoProps) {
-  const [inscrito, setInscrito] = useState<InscritoType>()
+  const [inscrito, setInscrito] = useState<any>()
   const [step, setStep] = useState<number>(Steps.VALIDACAO)
 
   const reset = () => {

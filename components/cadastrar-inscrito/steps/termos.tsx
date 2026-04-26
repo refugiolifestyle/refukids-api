@@ -9,14 +9,12 @@ import {
 } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { EventoTermoType } from "@/types/evento"
-import { InscritoType } from "@/types/inscrito"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { StepProps, Steps } from ".."
 
-const formSchema: z.ZodType<{ termos: EventoTermoType[] }> = z
+const formSchema: z.ZodType<{ termos: any[] }> = z
     .object({
         termos: z
             .object({
@@ -31,13 +29,13 @@ export default function Termos({ setStep, inscrito, setInscrito, reset, evento }
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            termos: inscrito?.termos || evento.termos.map(termo => ({ ...termo, assinado: false }))
+            termos: inscrito?.termos || evento.termos.map((termo: any) => ({ ...termo, assinado: false }))
         }
     });
 
 
-    async function onSubmit({ termos }: { termos: EventoTermoType[] }) {
-        const payload: InscritoType = { ...inscrito!, termos }
+    async function onSubmit({ termos }: { termos: any[] }) {
+        const payload: any = { ...inscrito!, termos }
 
         if (evento.pagamentos.length > 1) {
             setInscrito(payload)

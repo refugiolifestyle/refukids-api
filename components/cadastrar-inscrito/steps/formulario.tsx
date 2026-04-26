@@ -10,7 +10,6 @@ import {
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { InscritoType } from "@/types/inscrito"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { InputMask } from '@react-input/mask'
 import { cpf as cpfValidation } from 'cpf-cnpj-validator'
@@ -23,65 +22,61 @@ const FormSchema = z
     .object({
         cpfEsposa: z
             .string({
-                required_error: "O campo é obrigatório",
-                invalid_type_error: "Campo inválido (digite somente números)"
+                error: "O campo é obrigatório",
             })
             .length(14, "O campo precisa conter 11 digitos")
             .refine(data => cpfValidation.isValid(data), "Campo inválido (digite somente números)"),
         rgEsposa: z
             .string({
-                required_error: "O campo é obrigatório",
-                invalid_type_error: "Campo inválido (digite somente números)"
+                error: "O campo é obrigatório",
             })
             .length(9, "O campo precisa conter 7 digitos"),
         nomeEsposa: z
-            .string({ required_error: "O campo é obrigatório" })
+            .string({ error: "O campo é obrigatório" })
             .min(10, { message: "Campo precisa ter no mínimo 10 caracteres" }),
         redeEsposa: z
             .string({
-                required_error: "O campo é obrigatório"
+                error: "O campo é obrigatório"
             }),
         celulaEsposa: z
             .string({
-                required_error: "O campo é obrigatório"
+                error: "O campo é obrigatório"
             }),
         cpf: z
             .string({
-                required_error: "O campo é obrigatório",
-                invalid_type_error: "Campo inválido (digite somente números)"
+                error: "O campo é obrigatório",
             })
             .length(14, "O campo precisa conter 11 digitos")
             .refine(data => cpfValidation.isValid(data), "Campo inválido (digite somente números)"),
         rg: z
             .string({
-                required_error: "O campo é obrigatório",
-                invalid_type_error: "Campo inválido (digite somente números)"
+                error: "O campo é obrigatório",
             })
             .length(9, "O campo precisa conter 7 digitos"),
         nome: z
-            .string({ required_error: "O campo é obrigatório" })
+            .string({ error: "O campo é obrigatório" })
             .min(10, { message: "Campo precisa ter no mínimo 10 caracteres" }),
         rede: z
             .string({
-                required_error: "O campo é obrigatório"
+                error: "O campo é obrigatório"
             }),
         celula: z
             .string({
-                required_error: "O campo é obrigatório"
+                error: "O campo é obrigatório"
             }),
         endereco: z
-            .string({ required_error: "O campo é obrigatório" })
+            .string({ error: "O campo é obrigatório" })
             .min(10, { message: "Campo precisa ter no mínimo 10 caracteres" }),
         dataDeCasamento: z
-            .string({ required_error: "O campo é obrigatório" })
+            .string({ error: "O campo é obrigatório" })
             .min(1, { message: "O campo é obrigatório" }),
         telefone: z
-            .string({ required_error: "O Campo Telefone é obrigatório" })
+            .string({ error: "O Campo Telefone é obrigatório" })
             .min(10, { message: "Campo precisa ter no mínimo 10 digitos" })
             .max(11, { message: "Campo precisa ter no máximo 11 digitos" }),
         email: z
             .string({
-                required_error: "O Campo Email é obrigatório",
+                error: "O Campo Email é obrigatório",
             })
             .email("O Campo Email é obrigatório")
     }).superRefine(({ redeEsposa, rede, celulaEsposa, celula }, ctx) => {
@@ -149,7 +144,7 @@ export default function Formulario({ setStep, inscrito, setInscrito, reset, even
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
         try {
-            const payload: InscritoType = {
+            const payload: any = {
                 ...data,
                 inscritoEm: new Date().toString(),
                 nome: data.nome.toLowerCase().replace(/(^.|\s+.)/g, m => m.toUpperCase()),

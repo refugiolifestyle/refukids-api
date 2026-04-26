@@ -7,10 +7,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { database } from "@/configs/firebase"
-import { get, onValue, ref, Unsubscribe } from "firebase/database"
 import { Loader2 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { StepProps, Steps } from ".."
 import { PagamentoMoneyModal } from "../pagamento-money-modal"
 
@@ -24,27 +22,6 @@ export default function Pagamentos({ setStep, inscrito, evento }: StepProps) {
     const [pagando, setPagando] = useState(false)
     const [pagamento, setPagamento] = useState<PagamentoResponse>()
     const [meioPagamento, setMeioPagamento] = useState<"pix" | "credit_card" | "money" | "infinitepay">('infinitepay')
-
-    useEffect(() => {
-        if (pagamento) {
-            let pagamentoSubs: Unsubscribe;
-            window.open(pagamento.checkout, '_self');
-
-            (async () => {
-                const refInscritoKit = ref(database, `eventos/${evento.id}/kits/${inscrito?.cpf}`)
-                const snapshotInscritoKit = await get(refInscritoKit);
-
-                const refPagamentoStatus = ref(database, `eventos/${evento.id}/inscricoes/${inscrito?.cpf}/pagamentos/${pagamento.txid}/status`)
-                pagamentoSubs = onValue(refPagamentoStatus, snapStatus => {
-                    if (['CONCLUIDA', 'paid'].includes(snapStatus.val())) {
-                        setStep(snapshotInscritoKit.exists() ? Steps.FINALIZACAO_COM_KIT : Steps.FINALIZACAO)
-                    }
-                })
-            })();
-
-            return () => pagamentoSubs();
-        }
-    }, [pagamento]);
 
     async function onSubmit() {
         setPagando(true)
@@ -82,10 +59,10 @@ export default function Pagamentos({ setStep, inscrito, evento }: StepProps) {
         }
     }
 
-    const pagamentoTotaisPix = inscrito?.pagamentosAFazer?.reduce((a, p) => a + p.valores['pix'], 0)
-    const pagamentoTotaisCartao = inscrito?.pagamentosAFazer?.reduce((a, p) => a + p.valores['credit_card'], 0)
-    const pagamentoTotaisMoney = inscrito?.pagamentosAFazer?.reduce((a, p) => a + p.valores['money'], 0)
-    const pagamentoTotaisInfinitePay = inscrito?.pagamentosAFazer?.reduce((a, p) => a + p.valores['infinitepay'], 0)
+    const pagamentoTotaisPix = inscrito?.pagamentosAFazer?.reduce((a: any, p: any) => a + p.valores['pix'], 0)
+    const pagamentoTotaisCartao = inscrito?.pagamentosAFazer?.reduce((a: any, p: any) => a + p.valores['credit_card'], 0)
+    const pagamentoTotaisMoney = inscrito?.pagamentosAFazer?.reduce((a: any, p: any) => a + p.valores['money'], 0)
+    const pagamentoTotaisInfinitePay = inscrito?.pagamentosAFazer?.reduce((a: any, p: any) => a + p.valores['infinitepay'], 0)
 
     return <>
         <Card className="w-full max-w-sm">

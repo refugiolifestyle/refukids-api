@@ -7,15 +7,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Check, Circle, Dot } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Circle, Dot } from "lucide-react"
 import { useState } from "react"
 import { StepProps, Steps } from ".."
-import { EventoPagamentosType } from "@/types/evento"
-import { InscritoType } from "@/types/inscrito"
-import { Checkbox } from "@/components/ui/checkbox"
 
 export default function Parcelas({ setStep, inscrito, setInscrito, evento }: StepProps) {
-    const [parcelasSelecionadas, setParcelasSelecionadas] = useState<EventoPagamentosType[]>(inscrito?.pagamentosAFazer || [])
+    const [parcelasSelecionadas, setParcelasSelecionadas] = useState<any[]>(inscrito?.pagamentosAFazer || [])
 
     async function onSubmit() {
         if (!parcelasSelecionadas.length) {
@@ -23,7 +21,7 @@ export default function Parcelas({ setStep, inscrito, setInscrito, evento }: Ste
             return;
         }
 
-        const payload: InscritoType = {
+        const payload: any = {
             ...inscrito!,
             pagamentosAFazer: parcelasSelecionadas
         }
@@ -32,7 +30,7 @@ export default function Parcelas({ setStep, inscrito, setInscrito, evento }: Ste
         setStep(Steps.PAGAMENTO)
     }
 
-    function selecionarParcela(pagamento: EventoPagamentosType) {
+    function selecionarParcela(pagamento: any) {
         setParcelasSelecionadas(o => {
             if (o.some(s => s.parcela == pagamento.parcela)) {
                 return o.filter(f => f.parcela != pagamento.parcela)
@@ -43,9 +41,9 @@ export default function Parcelas({ setStep, inscrito, setInscrito, evento }: Ste
     }
 
     const parcelasPagas = Object.values(inscrito?.pagamentos || [])
-        .reduce<number[]>((a, p) => {
+        .reduce<number[]>((a: any, p: any) => {
             return ["CONCLUIDA", "paid"].includes(p.status!)
-                ? a.concat(p.parcelas.map(m => m.parcela))
+                ? a.concat(p.parcelas.map((m: any) => m.parcela))
                 : a
         }, [])
 
@@ -56,7 +54,7 @@ export default function Parcelas({ setStep, inscrito, setInscrito, evento }: Ste
         </CardHeader>
         <CardContent className="flex flex-col space-y-4">
             <div className="grid gap-2 grid-cols-2">
-                {evento?.pagamentos.map(pagamento => <label
+                {evento?.pagamentos.map((pagamento: any) => <label
                     key={pagamento.parcela}
                     htmlFor={`parcela_${pagamento.parcela}`}
                     className={`cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70 border rounded-sm w-full h-full flex flex-col space-x-2 px-4 py-3 ${parcelasPagas?.includes(pagamento.parcela) ? 'bg-green-200' : parcelasSelecionadas?.some(s => s.parcela == pagamento.parcela) ? 'bg-blue-200' : ''}`}>

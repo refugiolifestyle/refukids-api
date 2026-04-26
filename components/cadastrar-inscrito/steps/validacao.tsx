@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { InscritoType } from "@/types/inscrito"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cpf as cpfValidation } from 'cpf-cnpj-validator'
 import { useForm } from "react-hook-form"
@@ -20,8 +19,7 @@ const FormSchema = z
     .object({
         cpf: z
             .string({
-                required_error: "CPF obrigatório",
-                invalid_type_error: "CPF inválido"
+                error: "CPF obrigatório"
             })
             .transform(data => data.replaceAll(/[^\d]+/g, ''))
             .refine(data => cpfValidation.isValid(data), "CPF inválido"),
@@ -36,7 +34,7 @@ export default function Validacao({ setStep, evento, setInscrito }: StepProps) {
     async function onSubmit({ cpf }: z.infer<typeof FormSchema>) {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/eventos/${evento.id}/inscricoes/${cpf}`)
-            const { inscrito, temKitValido } = await response.json() as { inscrito: InscritoType, temKitValido: boolean }
+            const { inscrito, temKitValido } = await response.json() as { inscrito: any, temKitValido: boolean }
 
             setInscrito(inscrito)
 
@@ -49,7 +47,7 @@ export default function Validacao({ setStep, evento, setInscrito }: StepProps) {
                 }
             } else {
                 let pagamentos = Object.values(inscrito.pagamentos || {})
-                if (pagamentos.length && pagamentos.some(pagamento => ["CONCLUIDA", "paid"].includes(pagamento.status!))) {
+                if (pagamentos.length && pagamentos.some((pagamento: any) => ["CONCLUIDA", "paid"].includes(pagamento.status!))) {
                     setStep(temKitValido ? Steps.FINALIZACAO_COM_KIT : Steps.FINALIZACAO)
                 } else {
                     if (!evento.inscricoesAbertas) {

@@ -6,11 +6,9 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
-import { EventoType } from "@/types/evento"
 import { Share } from "lucide-react"
-import { useCallback } from "react"
-import { Button } from "../ui/button"
 import { StepProps } from "."
+import { Button } from "../ui/button"
 
 export default function Fechada({ evento, share }: Partial<StepProps>) {
     return <Card className="w-full max-w-sm">

@@ -9,44 +9,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import confetti from "canvas-confetti"
 import { CheckCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
 import { StepProps } from ".."
 
 export default function FinalizacaoComKit({ inscrito, evento, reset }: Partial<StepProps>) {
     let inscritoNomeParts = inscrito?.nome?.trim().split(" ")
-
-        useEffect(() => {
-        const duration = 1 * 1000; // duração 3s
-        const end = Date.now() + duration;
-
-        (function frame() {
-            confetti({
-                particleCount: 5,
-                angle: 60,
-                spread: 70,
-                origin: { x: 0 }, // lado esquerdo
-            });
-            confetti({
-                particleCount: 5,
-                angle: 120,
-                spread: 70,
-                origin: { x: 1 }, // lado direito
-            });
-            confetti({
-                particleCount: 5,
-                angle: 90,
-                spread: 70,
-                origin: { y: 1 }, // lado direito
-            });
-
-            if (Date.now() < end) {
-                requestAnimationFrame(frame);
-            }
-        })();
-    }, []);
 
     return <Card className="w-full max-w-sm">
         <CardHeader>

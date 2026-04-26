@@ -10,23 +10,23 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { EventoType } from "@/types/evento"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { CheckedState } from "@radix-ui/react-checkbox"
 import { useForm } from "react-hook-form"
 import { z, ZodType } from "zod"
 
 
 
-export function PagamentoMoneyModal({ onSubmit, loading, evento }: { evento: EventoType, loading: boolean, onSubmit: () => Promise<boolean | undefined> }) {
+export function PagamentoMoneyModal({ onSubmit, loading, evento }: { evento: any, loading: boolean, onSubmit: () => Promise<boolean | undefined> }) {
 
     const formSchema = z
         .object(Object.fromEntries(evento.temPromocaoTermos
-            ?.map(t => ([`termo_${t.termo}`, z.boolean().refine((termo) => !!termo)])) as any) as Record<string, ZodType>)
+            ?.map((t: any) => ([`termo_${t.termo}`, z.boolean().refine((termo) => !!termo)])) as any) as Record<string, ZodType>)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: Object.fromEntries(evento.temPromocaoTermos
-            ?.map(t => ([`termo_${t.termo}`, false])) as any) as Record<string, ZodType>
+            ?.map((t: any) => ([`termo_${t.termo}`, false])) as any) as Record<string, ZodType>
     });
 
     return (
@@ -47,7 +47,7 @@ export function PagamentoMoneyModal({ onSubmit, loading, evento }: { evento: Eve
                         </DialogHeader>
                         <div className="grid gap-6 my-4">
                             {
-                                evento.temPromocaoTermos?.map(termo => <FormField
+                                evento.temPromocaoTermos?.map((termo: any) => <FormField
                                     key={termo.termo}
                                     control={form.control}
                                     name={`termo_${termo.termo}`}
@@ -55,7 +55,7 @@ export function PagamentoMoneyModal({ onSubmit, loading, evento }: { evento: Eve
                                         <FormItem className="flex flex-row items-start space-y-0 space-x-2">
                                             <FormControl>
                                                 <Checkbox
-                                                    checked={field.value}
+                                                    checked={field.value as CheckedState}
                                                     onCheckedChange={field.onChange}
                                                 />
 
