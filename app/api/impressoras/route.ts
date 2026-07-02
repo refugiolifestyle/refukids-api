@@ -1,4 +1,3 @@
-import { useUserRequest } from "@/hooks/useUserRequest"
 import { prisma } from "@/lib/prisma"
 import { getPrismaErrorMessage } from "@/utils/helpers"
 import { fotoZodValidacao, nomeZodValidacao } from "@/utils/validacoes"
@@ -6,8 +5,6 @@ import { NextRequest } from "next/server"
 import z from "zod"
 
 export async function GET(req: NextRequest) {
-    const _ = useUserRequest(req)
-
     let impressoras = await prisma.impressora.findMany()
     return Response.json({ data: impressoras })
 }
@@ -35,6 +32,8 @@ export async function POST(req: NextRequest) {
         return Response.json({ data: impressora })
     }
     catch (error: any) {
+        console.error(error)
+
         if ("clientVersion" in error) {
             const message = getPrismaErrorMessage(error.code)
             return Response.json({ error: message }, { status: 400 })

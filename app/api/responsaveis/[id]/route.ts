@@ -54,6 +54,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         return Response.json(responsavel)
     }
     catch (error: any) {
+        console.error(error)
+
         if ("clientVersion" in error) {
             const message = getPrismaErrorMessage(error.code)
             return Response.json({ error: message }, { status: 400 })
@@ -76,6 +78,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         return Response.json({})
     }
     catch (error: any) {
+        console.error(error)
+
         if ("clientVersion" in error) {
             const message = getPrismaErrorMessage(error.code)
             return Response.json({ error: message }, { status: 400 })

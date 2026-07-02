@@ -92,18 +92,9 @@ export async function POST(req: NextRequest) {
         return Response.json({ error: error.message })
     }
 
-    let responsavel = await prisma.responsavel.count({
-        where: {
-            cpf: usuario.cpf,
-            responsavelLegal: true
-        }
-    })
-
-    if (responsavel) {
-        return Response.json({ error: 'Usuário já possui uma Família' }, { status: 400 })
-    }
-
     try {
+
+
         const familia = await prisma.familia.create({
             data: {
                 nome: data.nome,
@@ -119,7 +110,6 @@ export async function POST(req: NextRequest) {
                         celula: usuario.celula,
                         responsavelLegal: true,
                         parentesco: data.parentesco as Parentesco,
-
                     }
                 }
             },

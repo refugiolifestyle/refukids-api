@@ -1,4 +1,3 @@
-import { Sexo } from "@prisma/client";
 
 export interface Endereco {
     endereco?: string;
@@ -24,18 +23,16 @@ export interface JWTKeycloakRolesPayload {
         };
     };
 
-    picture?: string
-    celula?: string,
-    birthdate: string,
-    gender: Sexo,
-    cpf: string,
-    name: string,
-    phone_number: string,
-    preferred_username: string,
-    full_address: string,
-    given_name: string,
-    family_name: string,
-    email: string,
+    birthdate: string
+    celula: string
+    cpf: string
+    email: string
+    full_address: string
+    gender: string
+    name: string
+    phoneNumber: string
+    preferred_username: string
+    profilePicture: string
 
     [propsName: string]: any
 }

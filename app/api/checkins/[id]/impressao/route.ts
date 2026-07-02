@@ -1,4 +1,3 @@
-import { useUserRequest } from "@/hooks/useUserRequest";
 import { prisma } from "@/lib/prisma";
 import { getPrismaErrorMessage } from "@/utils/helpers";
 import { idZodValidacao } from "@/utils/validacoes";
@@ -6,8 +5,6 @@ import { NextRequest } from "next/server";
 import z from "zod";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const _ = useUserRequest(req)
-
     const { id } = await params
     if (!id) {
         return Response.json({ error: 'Campo id é obrigatório' }, { status: 400 })
@@ -72,6 +69,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         return Response.json({ data: impressao })
     }
     catch (error: any) {
+        console.error(error)
+
         if ("clientVersion" in error) {
             const message = getPrismaErrorMessage(error.code)
             return Response.json({ error: message }, { status: 400 })

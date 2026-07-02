@@ -1,4 +1,4 @@
-import { useUserRequest } from "@/hooks/useUserRequest";
+import { useUserToken } from "@/hooks/useUserToken";
 import { prisma } from "@/lib/prisma";
 import { getPrismaErrorMessage } from "@/utils/helpers";
 import { idZodValidacao } from "@/utils/validacoes";
@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 import z from "zod";
 
 export async function POST(req: NextRequest) {
-    const usuario = useUserRequest(req)
+    const usuario = useUserToken(req)
 
     const { data: payload, error: payloadError } = z
         .object({
@@ -120,6 +120,8 @@ export async function POST(req: NextRequest) {
         return Response.json({ data: checkin })
     }
     catch (error: any) {
+        console.error(error)
+
         if ("clientVersion" in error) {
             let message = error.code === 'P2002'
                 ? "Checkin Já realizado para essa criança"
